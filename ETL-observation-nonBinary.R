@@ -28,7 +28,7 @@ tryCatch({
 
 #---------------------------------- Data and Mappings
 
-input_data <- read.csv("synthetic_aml_data_ctab_corrected.csv", header = TRUE, sep = ";")
+input_data <- read.csv("synthetic_aml_data_nflow_corrected.csv", header = TRUE, sep = ";")
 mapping <- read_excel("Mapping_table.xlsx", sheet = "Mappings")
 
 #--------------------------- get the big number values for measurement table
@@ -133,7 +133,7 @@ print(vertical_table_observation_nonBinary)
 # query the patient ids from person table
 get_person_id <- function(con, patient_id) {
   query <- glue::glue("
-    SELECT person_id FROM cds_cdm.person WHERE person_source_value = '{patient_id}';
+    SELECT person_id FROM cds_cdm_01.person WHERE person_source_value = '{patient_id}';
   ")
   result <- dbGetQuery(con, as.character(query))
   
@@ -161,7 +161,7 @@ for (i in 1:nrow(vertical_table_observation_nonBinary)) {
   unit_concept_id <- vertical_table_observation_nonBinary$unit_concept_id[i]
   
   query <- glue::glue("
-  INSERT INTO cds_cdm.observation (
+  INSERT INTO cds_cdm_01.observation (
     person_id, observation_concept_id, observation_date, 
     observation_type_concept_id, observation_source_value,
     value_as_number, unit_source_value, unit_concept_id
@@ -178,7 +178,7 @@ for (i in 1:nrow(vertical_table_observation_nonBinary)) {
 
 
 dbDisconnect(con)
-cat("Measurement data inserted into cds_cdm.observation table.\n")
+cat("Measurement data inserted into cds_cdm_01.observation table.\n")
 
 
 
