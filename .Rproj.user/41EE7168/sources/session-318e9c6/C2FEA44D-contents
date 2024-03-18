@@ -1,9 +1,0 @@
-# config.R
-db_user <- "ohdsi_admin_user"
-db_password <- "DknFQvVPrfjJ5r31Np04ZfaiBA1wNQ"
-drv <- dbDriver("PostgreSQL")
-db <- 'ohdsi'
-host_db <- "sv-diz-aml.med.tu-dresden.de"
-db_port <- '5432'
-dbms <- 'postgresql'
-schema = 'cds_cdm'

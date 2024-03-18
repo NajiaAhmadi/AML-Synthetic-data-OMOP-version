@@ -25,10 +25,12 @@ tryCatch({
   ParallelLogger::logError("Connection details:", db_info)
 })
 
-dbExecute(con, "TRUNCATE TABLE cds_cdm_01.measurement;")
+#dbExecute(con, "TRUNCATE TABLE cds_cdm_01.measurement;")
+dbExecute(con, "TRUNCATE TABLE cds_cdm.measurement;")
 #---------------------------------- Data and Mappings
 
-input_data <- read.csv("synthetic_aml_data_nflow_corrected.csv", header = TRUE, sep = ";")
+input_data <- read.csv("synthetic_aml_data_ctab_corrected.csv", header = TRUE, sep = ";")
+#input_data <- read.csv("synthetic_aml_data_nflow_corrected.csv", header = TRUE, sep = ";")
 mapping <- read_excel("Mapping_table.xlsx", sheet = "Mappings")
 #input_data$HB <- as.numeric(input_data$HB)
 #--------------------------------------------- Vertical binary measurement table
@@ -115,7 +117,7 @@ if (any(is.na(vertical_table))) {
 # query the patient ids from person table
 get_person_id <- function(con, patient_id) {
   query <- glue::glue("
-    SELECT person_id FROM cds_cdm_01.person WHERE person_source_value = '{patient_id}';
+    SELECT person_id FROM cds_cdm.person WHERE person_source_value = '{patient_id}';
   ")
   result <- dbGetQuery(con, as.character(query))
   
@@ -143,7 +145,7 @@ for (i in 1:nrow(vertical_table)) {
   
   
   query <- glue::glue("
-    INSERT INTO cds_cdm_01.measurement (
+    INSERT INTO cds_cdm.measurement (
       person_id, measurement_concept_id, measurement_date, 
       measurement_type_concept_id, measurement_source_value,
       value_source_value
@@ -158,7 +160,7 @@ for (i in 1:nrow(vertical_table)) {
 }
 
 dbDisconnect(con)
-cat("Measurement data inserted into cds_cdm_01.measurement table.\n")
+cat("Measurement data inserted into cds_cdm.measurement table.\n")
 
 
 

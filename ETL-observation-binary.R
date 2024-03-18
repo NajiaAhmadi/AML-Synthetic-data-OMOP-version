@@ -24,11 +24,12 @@ tryCatch({
   ParallelLogger::logError("Connection details:", db_info)
 })
 
-dbExecute(con, "TRUNCATE TABLE cds_cdm_01.observation;")
+dbExecute(con, "TRUNCATE TABLE cds_cdm.observation;")
 
 #---------------------------------- Data and Mappings
 
-input_data <- read.csv("synthetic_aml_data_nflow_corrected.csv", header = TRUE, sep = ";")
+input_data <- read.csv("synthetic_aml_data_ctab_corrected.csv", header = TRUE, sep = ";")
+#input_data <- read.csv("synthetic_aml_data_nflow_corrected.csv", header = TRUE, sep = ";")
 mapping <- read_excel("Mapping_table.xlsx", sheet = "Mappings")
 
 #--------------------------------------------- Vertical binary observation table
@@ -115,7 +116,7 @@ if (any(is.na(vertical_table))) {
 # query the patient ids from person table
 get_person_id <- function(con, patient_id) {
   query <- glue::glue("
-    SELECT person_id FROM cds_cdm_01.person WHERE person_source_value = '{patient_id}';
+    SELECT person_id FROM cds_cdm.person WHERE person_source_value = '{patient_id}';
   ")
   result <- dbGetQuery(con, as.character(query))
   
@@ -140,7 +141,7 @@ for (i in 1:nrow(vertical_table)) {
   value_as_number <- vertical_table$Value[i]
   
   query <- glue::glue("
-    INSERT INTO cds_cdm_01.observation (
+    INSERT INTO cds_cdm.observation (
       person_id, observation_concept_id, observation_date, 
       observation_type_concept_id, observation_source_value,
       value_as_number
@@ -155,7 +156,7 @@ for (i in 1:nrow(vertical_table)) {
 }
 
 dbDisconnect(con)
-cat("Measurement data inserted into cds_cdm_01.observation table.\n")
+cat("Measurement data inserted into cds_cdm.observation table.\n")
 
 
 
